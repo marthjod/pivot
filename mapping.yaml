@@ -1,0 +1,25 @@
+mapping:
+    ram:
+        rename_key_to: 'memory'
+        values:
+            s: 1024
+            m: 2048
+            l: 4096
+            xxl: 16384
+            lgm: 65536
+            gmx: 6144
+    cpu:
+        rename_key_to: 'vcpu'
+        values:
+            s: 1
+            m: 2
+            l: 4
+            lgm: 16
+        ratio_factor: 0.25
+    disk:
+        rename_key_to: 'image'
+        values:
+            s: 20
+            m: 20
+            l: 40
+            xl: 80

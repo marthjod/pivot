@@ -1,0 +1,20 @@
+data_format_version: 0.6
+# --- MUST HAVE
+id: FOO
+name: Foo equals bar.
+type: Service
+owner: Foo Team
+description: "..."
+short_name: FOO
+# --- MUST HAVE END
+#-------------------------------------------------------------------------------
+runtime:
+  cpu: S
+  ram: M
+  disk: L
+  host_type: VM
+  network_zone: DMZ
+  environment:
+    - foo
+    - bar
+#-------------------------------------------------------------------------------
