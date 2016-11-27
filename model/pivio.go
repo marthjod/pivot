@@ -40,10 +40,11 @@ func PivioFromFile(path string) (*Pivio, error) {
 	return &pivio, nil
 }
 
-func (p *Pivio) Convert(m *mapping.Mappings) *OpenNebulaTemplate {
-	return &OpenNebulaTemplate{
-		Memory: m.RAM.Values.GetSize(p.Runtime.RAM),
-		VCPU:   float32(m.CPU.Values.GetSize(p.Runtime.CPU)),
-		Image:  m.Disk.Values.GetSize(p.Runtime.Disk),
+func (p *Pivio) Convert(m *mapping.Mappings) *OneTemplate {
+
+	return &OneTemplate{
+		Memory: mapping.GetSize(m.RAM.Values, p.Runtime.RAM),
+		VCPU:   float32(mapping.GetSize(m.CPU.Values, p.Runtime.CPU)) * m.CPU.RatioFactor,
+		Image:  mapping.GetSize(m.Disk.Values, p.Runtime.Disk),
 	}
 }

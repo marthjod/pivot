@@ -3,26 +3,20 @@ package mapping
 import (
 	"io/ioutil"
 
+	"strings"
+
 	"gopkg.in/yaml.v2"
 )
 
-type TShirtSizes struct {
-	S int `yaml:"s"`
-	M int `yaml:"m"`
-	L int `yaml:"l"`
-	// TODO get custom
-}
+type TShirtSizes map[string]int
 
-func (t *TShirtSizes) GetSize(alias string) int {
-	switch alias {
-	case "S":
-		return t.S
-	case "M":
-		return t.M
-	case "L":
-		return t.L
-	default:
-		return 0
+func GetSize(t TShirtSizes, key string) int {
+	if val, found := t[key]; found {
+		return val
+	} else if val, found = t[strings.ToLower(key)]; found {
+		return val
+	} else {
+		return t[strings.ToUpper(key)]
 	}
 }
 
@@ -32,8 +26,9 @@ type TShirtSizeMapping struct {
 }
 
 type CPUMapping struct {
-	TShirtSizeMapping
-	RatioFactor float32 `yaml:"ratio_factor"`
+	Alias       string      `yaml:"rename_key_to"`
+	Values      TShirtSizes `yaml:"values"`
+	RatioFactor float32     `yaml:"ratio_factor"`
 }
 
 type Mappings struct {

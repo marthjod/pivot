@@ -17,7 +17,7 @@ func main() {
 		convertedYAML string
 		pivio         *model.Pivio
 		mapp          *mapping.Mappings
-		oneTemplate   *model.OpenNebulaTemplate
+		oneTemplate   *model.OneTemplate
 		oneYAML       []byte
 	)
 
