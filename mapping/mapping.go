@@ -31,9 +31,14 @@ type TShirtSizeMapping struct {
 	Values TShirtSizes `yaml:"values"`
 }
 
+type CPUMapping struct {
+	TShirtSizeMapping
+	RatioFactor float32 `yaml:"ratio_factor"`
+}
+
 type Mappings struct {
 	RAM  TShirtSizeMapping `yaml:"ram"`
-	CPU  TShirtSizeMapping `yaml:"cpu"`
+	CPU  CPUMapping        `yaml:"cpu"`
 	Disk TShirtSizeMapping `yaml:"disk"`
 }
 
