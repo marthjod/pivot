@@ -10,7 +10,7 @@ short_name: FOO
 #-------------------------------------------------------------------------------
 runtime:
   cpu: S
-  ram: M
+  ram: CUSTOM
   disk: L
   host_type: VM
   network_zone: DMZ
