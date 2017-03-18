@@ -2,52 +2,44 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"io/ioutil"
-
-	"github.com/marthjod/pivot/mapping"
 	"github.com/marthjod/pivot/model"
+	"log"
+	"text/template"
 )
 
 func main() {
 	var (
-		err           error
-		pivioYAML     string
-		mappingYAML   string
-		convertedYAML string
-		pivio         *model.Pivio
-		mapp          *mapping.Mappings
-		oneTemplate   *model.OneTemplate
-		oneYAML       []byte
+		err          error
+		pivioYAML    string
+		templateFile string
+		tpl          *template.Template
+		pivio        *model.Pivio
 	)
 
 	flag.StringVar(&pivioYAML, "pivio", "pivio.yaml", "Path to pivio.yaml")
-	flag.StringVar(&mappingYAML, "mapping", "mapping.yaml", "Path to mapping YAML")
-	flag.StringVar(&convertedYAML, "converted", "converted.yaml", "Path to conversion output")
+	flag.StringVar(&templateFile, "template", "templates/network-dsl.tpl", "Path to output template")
 	flag.Parse()
 
+	log.Println("reading from " + pivioYAML)
 	pivio, err = model.PivioFromFile(pivioYAML)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	mapp, err = mapping.FromFile(mappingYAML)
+	log.Printf("%q\n", pivio.ShortName)
+	log.Printf("  provides %v", pivio.Services.Provides)
+	log.Printf("  internal deps: %v\n", pivio.Services.DependsOn.Internal)
+	log.Printf("  external deps: %v\n", pivio.Services.DependsOn.External)
+
+	tpl, err = template.ParseFiles(templateFile)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	oneTemplate = pivio.Convert(mapp)
-	oneYAML, err = oneTemplate.ToYAML()
+	rendered, err := pivio.Render(tpl)
 	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("Runtime:\n%+v\nMapping:\n%+v\nConverted:\n%s\n",
-		pivio.Runtime, mapp, oneYAML)
-
-	fmt.Printf("Writing converted YAML to %s\n", convertedYAML)
-	err = ioutil.WriteFile(convertedYAML, oneYAML, 0666)
-	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
+	log.Println(rendered)
 }

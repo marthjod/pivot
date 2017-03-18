@@ -1,16 +1,21 @@
 package model
 
 import (
-	"io/ioutil"
-
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	// "github.com/ghodss/yaml" not working correctly
-	"github.com/marthjod/pivot/mapping"
+
+	"bytes"
+	"text/template"
 )
 
 type PivioEnvironment string
 
-type Runtime struct {
+type Service struct {
+	Name string `yaml:"service_name"`
+}
+
+type PivioRuntime struct {
 	CPU          string             `yaml:"cpu"`
 	RAM          string             `yaml:"ram"`
 	Disk         string             `yaml:"disk"`
@@ -19,10 +24,29 @@ type Runtime struct {
 	Environments []PivioEnvironment `yaml:"environment"`
 }
 
+type PivioServices struct {
+	Provides  []PivioServiceProvides `yaml:"provides"`
+	DependsOn PivioServiceDependsOn  `yaml:"depends_on"`
+}
+
+type PivioServiceDependsOn struct {
+	Internal []Service `yaml:"internal"`
+	External []Service `yaml:"external"`
+}
+
+type PivioServiceProvides struct {
+	Description       string `yaml:"description"`
+	ServiceName       string `yaml:"service_name"`
+	Protocol          string `yaml:"protocol"`
+	Port              uint32 `yaml:"port"`
+	TransportProtocol string `yaml:"transport_protocol"`
+}
+
 type Pivio struct {
-	Id        string  `yaml:"id"`
-	ShortName string  `yaml:"short_name"`
-	Runtime   Runtime `yaml:"runtime"`
+	Id        string       `yaml:"id"`
+	ShortName string       `yaml:"short_name"`
+	Runtime   PivioRuntime `yaml:"runtime"`
+	Services  PivioServices `yaml:"service"`
 	// etc.
 }
 
@@ -40,11 +64,11 @@ func PivioFromFile(path string) (*Pivio, error) {
 	return &pivio, nil
 }
 
-func (p *Pivio) Convert(m *mapping.Mappings) *OneTemplate {
-
-	return &OneTemplate{
-		Memory: mapping.GetSize(m.RAM.Values, p.Runtime.RAM),
-		VCPU:   float32(mapping.GetSize(m.CPU.Values, p.Runtime.CPU)) * m.CPU.RatioFactor,
-		Image:  mapping.GetSize(m.Disk.Values, p.Runtime.Disk),
+func (p *Pivio) Render(tpl *template.Template) (string, error) {
+	var buf bytes.Buffer
+	err := tpl.Execute(&buf, p)
+	if err != nil {
+		return "", err
 	}
+	return buf.String(), nil
 }
