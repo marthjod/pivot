@@ -2,44 +2,66 @@ package main
 
 import (
 	"flag"
+	"github.com/marthjod/pivot/customformat"
 	"github.com/marthjod/pivot/model"
 	"log"
+	"os"
 	"text/template"
 )
 
 func main() {
 	var (
 		err          error
-		pivioYAML    string
+		yamlFile     string
 		templateFile string
 		tpl          *template.Template
+		customFormat bool
 		pivio        *model.Pivio
 	)
 
-	flag.StringVar(&pivioYAML, "pivio", "pivio.yaml", "Path to pivio.yaml")
-	flag.StringVar(&templateFile, "template", "templates/network-dsl.tpl", "Path to output template")
+	flag.StringVar(&yamlFile, "pivio", "pivio.yaml", "Path to pivio.yaml (input)")
+	flag.StringVar(&templateFile, "template", "", "Path to template file for output rendering")
+	flag.BoolVar(&customFormat, "custom", false, "Marshal custom YAML output")
 	flag.Parse()
 
-	log.Println("reading from " + pivioYAML)
-	pivio, err = model.PivioFromFile(pivioYAML)
+	if templateFile == "" && !customFormat {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	f, err := os.Open(yamlFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	pivio, err = model.Read(f)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("%q\n", pivio.ShortName)
-	log.Printf("  provides %v", pivio.Services.Provides)
-	log.Printf("  internal deps: %v\n", pivio.Services.DependsOn.Internal)
-	log.Printf("  external deps: %v\n", pivio.Services.DependsOn.External)
+	log.Printf("Read from %s:\n%+v\n", yamlFile, pivio)
 
-	tpl, err = template.ParseFiles(templateFile)
-	if err != nil {
-		log.Fatal(err)
+	out := ""
+	if customFormat {
+		customFormat := customformat.Convert(pivio)
+		if err != nil {
+			log.Fatal(err)
+		}
+		out, err = customFormat.Yaml()
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		tpl, err = template.ParseFiles(templateFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		out, err = pivio.Render(tpl)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	rendered, err := pivio.Render(tpl)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println(rendered)
+	log.Printf("Output:\n%s\n", out)
 }
