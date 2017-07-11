@@ -1,10 +1,9 @@
 package model
 
 import (
+	"os"
 	"reflect"
-	"strings"
 	"testing"
-	"text/template"
 )
 
 var expectedRuntime = PivioRuntime{
@@ -37,32 +36,13 @@ var expectedService = PivioServices{
 	},
 }
 
-var expectedRenderedTemplate = `
-service("web-announcement-service") {
-    description    "Web Display of the Announcement"
-    attach_to      "hg-CFPA"
-    protocol       "tcp"
-    port           80
-
-    # WIP
-    talks_to    "user-service"
-    talks_to    "email-announcement-service"
-    }
-
-service("rest-announcement-service") {
-    description    "REST API for updating CfP data"
-    attach_to      "hg-CFPA"
-    protocol       "tcp"
-    port           9449
-
-    # WIP
-    talks_to    "user-service"
-    talks_to    "email-announcement-service"
-    }
-`
-
-func TestPivioFromFile(t *testing.T) {
-	p, err := PivioFromFile("../pivio.yaml")
+func TestPivio_Read(t *testing.T) {
+	f, err := os.Open("../pivio.yaml")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer f.Close()
+	p, err := Read(f)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,26 +66,5 @@ func TestPivioFromFile(t *testing.T) {
 
 	if !reflect.DeepEqual(p.Services.DependsOn.Internal, expectedService.DependsOn.Internal) {
 		t.Fatal("Internal dependencies do not match.")
-	}
-}
-
-func TestRender(t *testing.T) {
-	p, err := PivioFromFile("../pivio.yaml")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	tpl, err := template.ParseFiles("../templates/network-dsl.tpl")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	rendered, err := p.Render(tpl)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if strings.TrimSpace(rendered) != strings.TrimSpace(expectedRenderedTemplate) {
-		t.Fatal("Rendered template does not match expectation, found", rendered)
 	}
 }

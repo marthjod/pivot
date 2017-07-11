@@ -6,6 +6,7 @@ import (
 	// "github.com/ghodss/yaml" not working correctly
 
 	"bytes"
+	"io"
 	"text/template"
 )
 
@@ -43,15 +44,15 @@ type PivioServiceProvides struct {
 }
 
 type Pivio struct {
-	Id        string       `yaml:"id"`
-	ShortName string       `yaml:"short_name"`
-	Runtime   PivioRuntime `yaml:"runtime"`
+	Id        string        `yaml:"id"`
+	ShortName string        `yaml:"short_name"`
+	Runtime   PivioRuntime  `yaml:"runtime"`
 	Services  PivioServices `yaml:"service"`
 	// etc.
 }
 
-func PivioFromFile(path string) (*Pivio, error) {
-	data, err := ioutil.ReadFile(path)
+func Read(r io.Reader) (*Pivio, error) {
+	data, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
