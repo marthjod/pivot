@@ -4,35 +4,43 @@ import (
 	"fmt"
 	"github.com/marthjod/pivot/model"
 	"gopkg.in/yaml.v2"
+	"strings"
+	"sort"
 )
 
-type Service map[string]CustomFormat
+type Service map[string]map[string]interface{}
 
-type CustomFormat struct {
-	CPU      string   `yaml:"cpu"`
-	Memory   string   `yaml:"memory"`
-	Image    string   `yaml:"image"`
-	Networks []string `yaml:"networks"`
+type Converter struct {
+	Pivio *model.Pivio
+	Aliases *Aliases
 }
 
-func (c Service) Yaml() (string, error) {
-	y, err := yaml.Marshal(c)
+func (s Service) Yaml() (string, error) {
+	y, err := yaml.Marshal(s)
 	if err != nil {
 		return "", err
 	}
 	return string(y), nil
 }
 
-func Convert(p *model.Pivio) *Service {
-	csf := CustomFormat{
-		CPU:    p.Runtime.CPU,
-		Image:  p.Runtime.Disk,
-		Memory: p.Runtime.RAM,
+func (c Converter) Convert(p *model.Pivio) Service {
+	zones := []string{
+		fmt.Sprintf("zone-%s-%s", strings.ToUpper(p.Runtime.NetworkZone), strings.ToUpper(p.ShortName)),
+		"zone-LOGGING",
+		"zone-ACCESS",
 	}
-	csf.Networks = append(csf.Networks, p.Runtime.NetworkZone)
 
-	cs := Service{
-		fmt.Sprintf("hg-%s", p.ShortName): csf,
+	sort.Strings(zones)
+
+	cs := map[string]map[string]interface{}{
+		fmt.Sprintf("hg-%s", p.ShortName): {
+			"cpu": c.Aliases.Get("cpu", p.Runtime.CPU),
+			"vcpu": c.Aliases.Get("vcpu", p.Runtime.CPU),
+			"image": c.Aliases.Get("image", p.Runtime.Disk),
+			"memory": c.Aliases.Get("memory", p.Runtime.RAM),
+			"networks": zones,
+		},
 	}
-	return &cs
+
+	return cs
 }

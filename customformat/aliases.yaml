@@ -1,0 +1,12 @@
+memory:
+  S: 2048
+  M: 4096
+image:
+  S: ubuntu-latest-minimal
+  M: ubuntu-latest
+cpu:
+  M: 0.5
+  XL: 2
+vcpu:
+  M: 2
+  XL: 8

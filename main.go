@@ -6,30 +6,19 @@ import (
 	"github.com/marthjod/pivot/model"
 	"log"
 	"os"
-	"text/template"
 )
 
 func main() {
 	var (
-		err          error
-		yamlFile     string
-		templateFile string
-		tpl          *template.Template
-		customFormat bool
-		pivio        *model.Pivio
+		err         error
+		pivioYaml   = flag.String("pivio", "pivio.yaml", "Path to pivio.yaml (input)")
+		aliasesYaml = flag.String("aliases", "aliases.yaml", "Path to alias mapping (input)")
+		pivio       *model.Pivio
 	)
 
-	flag.StringVar(&yamlFile, "pivio", "pivio.yaml", "Path to pivio.yaml (input)")
-	flag.StringVar(&templateFile, "template", "", "Path to template file for output rendering")
-	flag.BoolVar(&customFormat, "custom", false, "Marshal custom YAML output")
 	flag.Parse()
 
-	if templateFile == "" && !customFormat {
-		flag.Usage()
-		os.Exit(1)
-	}
-
-	f, err := os.Open(yamlFile)
+	f, err := os.Open(*pivioYaml)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,28 +28,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("Read from %s:\n%+v\n", yamlFile, pivio)
+	log.Printf("Read from %s:\n%+v\n", *pivioYaml, pivio)
 
-	out := ""
-	if customFormat {
-		customFormat := customformat.Convert(pivio)
-		if err != nil {
-			log.Fatal(err)
-		}
-		out, err = customFormat.Yaml()
-		if err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		tpl, err = template.ParseFiles(templateFile)
-		if err != nil {
-			log.Fatal(err)
-		}
+	f, err = os.Open(*aliasesYaml)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	aliases, err := customformat.Read(f)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-		out, err = pivio.Render(tpl)
-		if err != nil {
-			log.Fatal(err)
-		}
+	log.Printf("Read from %s:\n%+v\n", *aliasesYaml, aliases)
+
+	converter := customformat.Converter{
+		Pivio:   pivio,
+		Aliases: aliases,
+	}
+	custom := converter.Convert(pivio)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	out, err := custom.Yaml()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Printf("Output:\n%s\n", out)
