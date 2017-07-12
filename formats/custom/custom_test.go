@@ -1,15 +1,16 @@
-package customformat
+package custom
 
 import (
 	"github.com/marthjod/pivot/model"
 	"os"
 	"testing"
 	"log"
+	"github.com/marthjod/pivot/convert"
 )
 
 const (
-	pivio    = "../pivio.yaml"
-	aliases  = "../customformat/aliases.yaml"
+	pivio    = "../../pivio.yaml"
+	aliases  = "aliases.yaml"
 )
 
 func TestConvert(t *testing.T) {
@@ -43,21 +44,21 @@ func TestConvert(t *testing.T) {
 	}
 	defer f.Close()
 
-	a, err := Read(f)
+	a, err := convert.ReadAliases(f)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	conv := Converter{
+	conv := ServiceConverter{
 		Pivio: p,
 		Aliases: a,
 	}
-	c := conv.Convert()
-	actual, err := c.Yaml()
+
+	actual, err := conv.Render()
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 	if actual != expected {
-		t.Errorf("YAML output does not mach expectation. Expected:\n%s\nActual:\n%s", expected, actual)
+		t.Errorf("Output does not mach expectation. Expected:\n%s\nActual:\n%s", expected, actual)
 	}
 }

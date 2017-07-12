@@ -1,9 +1,13 @@
-package customformat
+package convert
 
 import (
 	"testing"
 	"os"
 	"log"
+)
+
+const (
+	aliases  = "../formats/custom/aliases.yaml"
 )
 
 var expected = []struct{
@@ -30,7 +34,7 @@ func TestGet(t *testing.T) {
 	}
 	defer f.Close()
 
-	a, err := Read(f)
+	a, err := ReadAliases(f)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

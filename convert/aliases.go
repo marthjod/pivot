@@ -1,4 +1,4 @@
-package customformat
+package convert
 
 import (
 	"io"
@@ -8,7 +8,7 @@ import (
 
 type Aliases map[string]map[string]interface{}
 
-func Read(r io.Reader) (*Aliases, error) {
+func ReadAliases(r io.Reader) (*Aliases, error) {
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err

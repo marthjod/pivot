@@ -1,19 +1,15 @@
-package customformat
+package custom
 
 import (
 	"fmt"
 	"github.com/marthjod/pivot/model"
+	"github.com/marthjod/pivot/convert"
 	"gopkg.in/yaml.v2"
 	"strings"
 	"sort"
 )
 
 type Service map[string]map[string]interface{}
-
-type Converter struct {
-	Pivio *model.Pivio
-	Aliases *Aliases
-}
 
 func (s Service) Yaml() (string, error) {
 	y, err := yaml.Marshal(s)
@@ -23,7 +19,17 @@ func (s Service) Yaml() (string, error) {
 	return string(y), nil
 }
 
-func (c Converter) Convert() Service {
+type ServiceConverter struct {
+	convert.Converter
+	Pivio *model.Pivio
+	Aliases *convert.Aliases
+}
+
+func (c *ServiceConverter) Render() (string, error) {
+	return c.Convert().Yaml()
+}
+
+func (c *ServiceConverter) Convert() Service {
 	zones := []string{
 		fmt.Sprintf("zone-%s-%s", strings.ToUpper(c.Pivio.Runtime.NetworkZone), strings.ToUpper(c.Pivio.ShortName)),
 		"zone-LOGGING",
@@ -32,7 +38,7 @@ func (c Converter) Convert() Service {
 
 	sort.Strings(zones)
 
-	cs := map[string]map[string]interface{}{
+	return map[string]map[string]interface{}{
 		fmt.Sprintf("hg-%s", c.Pivio.ShortName): {
 			"cpu": c.Aliases.Get("cpu", c.Pivio.Runtime.CPU),
 			"vcpu": c.Aliases.Get("vcpu", c.Pivio.Runtime.CPU),
@@ -41,6 +47,4 @@ func (c Converter) Convert() Service {
 			"networks": zones,
 		},
 	}
-
-	return cs
 }

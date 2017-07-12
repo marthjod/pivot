@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
-	"github.com/marthjod/pivot/customformat"
+	"github.com/marthjod/pivot/formats/custom"
+	"github.com/marthjod/pivot/formats/simple"
 	"github.com/marthjod/pivot/model"
 	"log"
 	"os"
+	"github.com/marthjod/pivot/convert"
 )
 
 func main() {
@@ -13,7 +15,9 @@ func main() {
 		err         error
 		pivioYaml   = flag.String("pivio", "pivio.yaml", "Path to pivio.yaml (input)")
 		aliasesYaml = flag.String("aliases", "aliases.yaml", "Path to alias mapping (input)")
+		outputFormat = flag.String("format", "default", "Conversion output format")
 		pivio       *model.Pivio
+		converter convert.Converter
 	)
 
 	flag.Parse()
@@ -29,28 +33,30 @@ func main() {
 	}
 
 	log.Printf("Read from %s:\n%+v\n", *pivioYaml, pivio)
+	switch *outputFormat {
+	case "custom":
+		f, err = os.Open(os.ExpandEnv(*aliasesYaml))
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		aliases, err := convert.ReadAliases(f)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-	f, err = os.Open(*aliasesYaml)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	aliases, err := customformat.Read(f)
-	if err != nil {
-		log.Fatal(err.Error())
+		log.Printf("Read from %s:\n%+v\n", *aliasesYaml, aliases)
+
+		converter = &custom.ServiceConverter{
+			Pivio: pivio,
+			Aliases: aliases,
+		}
+	default:
+		converter = &simple.Converter{
+			Pivio: pivio,
+		}
 	}
 
-	log.Printf("Read from %s:\n%+v\n", *aliasesYaml, aliases)
-
-	converter := customformat.Converter{
-		Pivio:   pivio,
-		Aliases: aliases,
-	}
-	custom := converter.Convert()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	out, err := custom.Yaml()
+	out, err := converter.Render()
 	if err != nil {
 		log.Fatal(err)
 	}
