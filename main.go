@@ -45,7 +45,7 @@ func main() {
 		Pivio:   pivio,
 		Aliases: aliases,
 	}
-	custom := converter.Convert(pivio)
+	custom := converter.Convert()
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -23,9 +23,9 @@ func (s Service) Yaml() (string, error) {
 	return string(y), nil
 }
 
-func (c Converter) Convert(p *model.Pivio) Service {
+func (c Converter) Convert() Service {
 	zones := []string{
-		fmt.Sprintf("zone-%s-%s", strings.ToUpper(p.Runtime.NetworkZone), strings.ToUpper(p.ShortName)),
+		fmt.Sprintf("zone-%s-%s", strings.ToUpper(c.Pivio.Runtime.NetworkZone), strings.ToUpper(c.Pivio.ShortName)),
 		"zone-LOGGING",
 		"zone-ACCESS",
 	}
@@ -33,11 +33,11 @@ func (c Converter) Convert(p *model.Pivio) Service {
 	sort.Strings(zones)
 
 	cs := map[string]map[string]interface{}{
-		fmt.Sprintf("hg-%s", p.ShortName): {
-			"cpu": c.Aliases.Get("cpu", p.Runtime.CPU),
-			"vcpu": c.Aliases.Get("vcpu", p.Runtime.CPU),
-			"image": c.Aliases.Get("image", p.Runtime.Disk),
-			"memory": c.Aliases.Get("memory", p.Runtime.RAM),
+		fmt.Sprintf("hg-%s", c.Pivio.ShortName): {
+			"cpu": c.Aliases.Get("cpu", c.Pivio.Runtime.CPU),
+			"vcpu": c.Aliases.Get("vcpu", c.Pivio.Runtime.CPU),
+			"image": c.Aliases.Get("image", c.Pivio.Runtime.Disk),
+			"memory": c.Aliases.Get("memory", c.Pivio.Runtime.RAM),
 			"networks": zones,
 		},
 	}

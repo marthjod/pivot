@@ -52,7 +52,7 @@ func TestConvert(t *testing.T) {
 		Pivio: p,
 		Aliases: a,
 	}
-	c := conv.Convert(p)
+	c := conv.Convert()
 	actual, err := c.Yaml()
 	if err != nil {
 		t.Fatal(err.Error())
