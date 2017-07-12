@@ -25,7 +25,7 @@ Input: example [pivio.yaml](https://github.com/marthjod/pivot/blob/master/pivio.
 ```
 ```json
 {
-  "hg-CFPA": {
+  "CFPA": {
     "cpu": "XL",
     "disk": "S",
     "memory": "S",
@@ -38,7 +38,7 @@ Input: example [pivio.yaml](https://github.com/marthjod/pivot/blob/master/pivio.
 ./pivot -format custom -aliases formats/custom/aliases.yaml
 ```
 ```yaml
-hg-CFPA:
+service-CFPA:
   cpu: 2
   image: ubuntu-latest-minimal
   memory: 2048

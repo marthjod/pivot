@@ -13,7 +13,7 @@ const (
 func TestConvert(t *testing.T) {
 	var (
         expected = `{
-  "hg-CFPA": {
+  "CFPA": {
     "cpu": "XL",
     "disk": "S",
     "memory": "S",

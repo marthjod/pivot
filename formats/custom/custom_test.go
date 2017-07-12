@@ -15,7 +15,7 @@ const (
 
 func TestConvert(t *testing.T) {
 	var (
-		expected = `hg-CFPA:
+		expected = `service-CFPA:
   cpu: 2
   image: ubuntu-latest-minimal
   memory: 2048

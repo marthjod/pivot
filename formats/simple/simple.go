@@ -1,7 +1,6 @@
 package simple
 
 import (
-	"fmt"
 	"github.com/marthjod/pivot/model"
 	"github.com/marthjod/pivot/convert"
 	"encoding/json"
@@ -28,7 +27,7 @@ func (d Converter) Render() (string, error) {
 
 func (d Converter) Convert() Simple {
 	return map[string]map[string]interface{}{
-		fmt.Sprintf("hg-%s", d.Pivio.ShortName): {
+		d.Pivio.ShortName: {
 			"cpu": d.Pivio.Runtime.CPU,
 			"disk": d.Pivio.Runtime.Disk,
 			"memory": d.Pivio.Runtime.RAM,

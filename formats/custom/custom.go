@@ -39,7 +39,7 @@ func (c *ServiceConverter) Convert() Service {
 	sort.Strings(zones)
 
 	return map[string]map[string]interface{}{
-		fmt.Sprintf("hg-%s", c.Pivio.ShortName): {
+		fmt.Sprintf("service-%s", c.Pivio.ShortName): {
 			"cpu": c.Aliases.Get("cpu", c.Pivio.Runtime.CPU),
 			"vcpu": c.Aliases.Get("vcpu", c.Pivio.Runtime.CPU),
 			"image": c.Aliases.Get("image", c.Pivio.Runtime.Disk),
