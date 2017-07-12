@@ -1,13 +1,12 @@
 package model
 
 import (
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
+
+	"gopkg.in/yaml.v2"
 	// "github.com/ghodss/yaml" not working correctly
 
-	"bytes"
 	"io"
-	"text/template"
 )
 
 type PivioEnvironment string
@@ -63,13 +62,4 @@ func Read(r io.Reader) (*Pivio, error) {
 	}
 
 	return &pivio, nil
-}
-
-func (p *Pivio) Render(tpl *template.Template) (string, error) {
-	var buf bytes.Buffer
-	err := tpl.Execute(&buf, p)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), nil
 }
