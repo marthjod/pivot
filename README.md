@@ -4,27 +4,40 @@
 
 Convert [pivio](https://github.com/pivio/) files.
 
-## Install
-
-```bash
-go get github.com/marthjod/pivot
-```
-
 ## Run
 
 ```
+./pivot -h
   -aliases string
     	Path to alias mapping (input) (default "aliases.yaml")
+  -format string
+    	Conversion output format (default "default")
   -pivio string
     	Path to pivio.yaml (input) (default "pivio.yaml")
 ```
 
+### Output formats
+
+Input: example [pivio.yaml](https://github.com/marthjod/pivot/blob/master/pivio.yaml).
+
 ```
-Read from pivio.yaml:
-&{Id:CFPAnnouncement ShortName:CFPA Runtime:{CPU:XL RAM:S Disk:S HostType:Docker NetworkZone:DMZ Environments:[]} Services:{Provides:[{Description:Web Display of the Announcement ServiceName:web-announcement-service Protocol:https Port:80 TransportProtocol:tcp} {Description:REST API for updating CfP data ServiceName:rest-announcement-service Protocol:https Port:9449 TransportProtocol:tcp}] DependsOn:{Internal:[{Name:user-service} {Name:email-announcement-service}] External:[]}}}
-Read from customformat/aliases.yaml:
-&map[vcpu:map[XL:8 M:2] memory:map[S:2048 M:4096] image:map[S:ubuntu-latest-minimal M:ubuntu-latest] cpu:map[XL:2 M:0.5]]
-2017/07/12 18:43:03 Output:
+./pivot -format simple
+```
+```json
+{
+  "hg-CFPA": {
+    "cpu": "XL",
+    "disk": "S",
+    "memory": "S",
+    "zone": "DMZ"
+  }
+}
+```
+
+```
+./pivot -format custom -aliases formats/custom/aliases.yaml
+```
+```yaml
 hg-CFPA:
   cpu: 2
   image: ubuntu-latest-minimal
@@ -34,4 +47,4 @@ hg-CFPA:
   - zone-DMZ-CFPA
   - zone-LOGGING
   vcpu: 8
-  ```
+```
