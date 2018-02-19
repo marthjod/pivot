@@ -10,7 +10,7 @@ import (
 func main() {
 	var (
 		queryEndpoint = flag.String("a", "http://pivio.example.com:9123", "Pivio query API endpoint")
-		shortname     = flag.String("s", "AAA", "artifact shortname to query")
+		shortname     = flag.String("s", "AAA", "Artifact shortname to query")
 	)
 	flag.Parse()
 

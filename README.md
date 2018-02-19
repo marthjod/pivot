@@ -2,9 +2,19 @@
 
 [![Travis CI Build Status](https://travis-ci.org/marthjod/pivot.svg?branch=master)](https://travis-ci.org/marthjod/pivot)
 
-Convert [pivio](https://github.com/pivio/) files.
+Retrieve/convert [pivio](https://github.com/pivio/) files.
 
-## Run
+## Example (API backend)
+
+```
+./pivot -h
+  -a string
+    	Pivio query API endpoint (default "http://pivio.example.com:9123")
+  -s string
+    	Artifact shortname to query (default "AAA")
+```
+
+## Example (file backend)
 
 ```
 ./pivot -h
