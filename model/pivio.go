@@ -63,3 +63,17 @@ func Read(r io.Reader) (*Pivio, error) {
 
 	return &pivio, nil
 }
+
+func ReadMultiple(r io.Reader) ([]Pivio, error) {
+	data, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+
+	pivios := []Pivio{}
+	if err := yaml.Unmarshal(data, &pivios); err != nil {
+		return nil, err
+	}
+
+	return pivios, nil
+}
