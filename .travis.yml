@@ -1,4 +1,7 @@
 language: go
-before_script:
-  - go vet ./...
-
+before_install:
+  - cd examples/filebackend && go get -u && cd -
+  - cd examples/apibackend && go get -u && cd -
+script:
+  - make vet
+  - make test
