@@ -1,16 +1,17 @@
 package custom
 
 import (
-	"github.com/marthjod/pivot/model"
+	"log"
 	"os"
 	"testing"
-	"log"
+
 	"github.com/marthjod/pivot/convert"
+	"github.com/marthjod/pivot/model"
 )
 
 const (
-	pivio    = "../../pivio.yaml"
-	aliases  = "aliases.yaml"
+	pivio   = "../../examples/filebackend/pivio.yaml"
+	aliases = "aliases.yaml"
 )
 
 func TestConvert(t *testing.T) {
@@ -50,7 +51,7 @@ func TestConvert(t *testing.T) {
 	}
 
 	conv := ServiceConverter{
-		Pivio: p,
+		Pivio:   p,
 		Aliases: a,
 	}
 

@@ -1,18 +1,19 @@
 package simple
 
 import (
-	"github.com/marthjod/pivot/model"
 	"os"
 	"testing"
+
+	"github.com/marthjod/pivot/model"
 )
 
 const (
-	pivio    = "../../pivio.yaml"
+	pivio = "../../examples/filebackend/pivio.yaml"
 )
 
 func TestConvert(t *testing.T) {
 	var (
-        expected = `{
+		expected = `{
   "CFPA": {
     "cpu": "XL",
     "disk": "S",

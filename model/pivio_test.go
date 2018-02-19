@@ -37,7 +37,7 @@ var expectedService = PivioServices{
 }
 
 func TestPivio_Read(t *testing.T) {
-	f, err := os.Open("../pivio.yaml")
+	f, err := os.Open("../examples/filebackend/pivio.yaml")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
