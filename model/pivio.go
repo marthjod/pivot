@@ -43,7 +43,7 @@ type PivioServiceProvides struct {
 }
 
 type Pivio struct {
-	Id        string        `yaml:"id"`
+	ID        string        `yaml:"id"`
 	ShortName string        `yaml:"short_name"`
 	Runtime   PivioRuntime  `yaml:"runtime"`
 	Services  PivioServices `yaml:"service"`
