@@ -30,5 +30,5 @@ func (c Client) QueryByShortname(name string) ([]model.Pivio, error) {
 		return []model.Pivio{}, err
 	}
 
-	return model.ReadMultiple(res.Body)
+	return model.ReadJSONMultiple(res.Body)
 }

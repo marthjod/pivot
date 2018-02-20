@@ -1,12 +1,12 @@
 package model
 
 import (
+	"encoding/json"
 	"io/ioutil"
 
-	"gopkg.in/yaml.v2"
-	// "github.com/ghodss/yaml" not working correctly
-
 	"io"
+
+	"gopkg.in/yaml.v2"
 )
 
 type PivioEnvironment string
@@ -64,14 +64,14 @@ func Read(r io.Reader) (*Pivio, error) {
 	return &pivio, nil
 }
 
-func ReadMultiple(r io.Reader) ([]Pivio, error) {
+func ReadJSONMultiple(r io.Reader) ([]Pivio, error) {
 	data, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
 
 	pivios := []Pivio{}
-	if err := yaml.Unmarshal(data, &pivios); err != nil {
+	if err := json.Unmarshal(data, &pivios); err != nil {
 		return nil, err
 	}
 
