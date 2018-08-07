@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,13 +21,13 @@ func (c Client) buildShortnameQueryURL(name string) string {
 }
 
 // QueryByShortname queries Pivio API and returns a matching Pivio record(s) on success
-func (c Client) QueryByShortname(name string) ([]model.Pivio, error) {
+func (c Client) QueryByShortname(name string) (model.Pivio, error) {
 	url := c.buildShortnameQueryURL(name)
 
 	log.Printf("accessing %s\n", url)
 	res, err := http.Get(url)
 	if err != nil {
-		return []model.Pivio{}, err
+		return model.Pivio{}, err
 	}
 	defer res.Body.Close()
 
@@ -39,5 +38,10 @@ func (c Client) QueryByShortname(name string) ([]model.Pivio, error) {
 
 	// fmt.Printf("%q", dump)
 
-	return model.ReadJSONMultiple(bufio.NewReader(res.Body))
+	var pivios = []model.Pivio{}
+	pivios, err = model.ReadJSONMultiple(res.Body)
+	if err != nil || len(pivios) < 1 {
+		return model.Pivio{}, err
+	}
+	return pivios[0], nil
 }
