@@ -12,41 +12,41 @@ import (
 type PivioEnvironment string
 
 type Service struct {
-	Name string `yaml:"service_name"`
+	Name string `yaml:"service_name" json:"service_name"`
 }
 
 type PivioRuntime struct {
-	CPU          string             `yaml:"cpu"`
-	RAM          string             `yaml:"ram"`
-	Disk         string             `yaml:"disk"`
-	HostType     string             `yaml:"host_type"`
-	NetworkZone  string             `yaml:"network_zone"`
-	Environments []PivioEnvironment `yaml:"environment"`
+	CPU          string             `yaml:"cpu" json:"cpu"`
+	RAM          string             `yaml:"ram" json:"ram"`
+	Disk         string             `yaml:"disk" json:"disk"`
+	HostType     string             `yaml:"host_type" json:"host_type"`
+	NetworkZone  string             `yaml:"network_zone" json:"network_zone"`
+	Environments []PivioEnvironment `yaml:"environment" json:"environment"`
 }
 
 type PivioServices struct {
-	Provides  []PivioServiceProvides `yaml:"provides"`
-	DependsOn PivioServiceDependsOn  `yaml:"depends_on"`
+	Provides  []PivioServiceProvides `yaml:"provides" json:"provides"`
+	DependsOn PivioServiceDependsOn  `yaml:"depends_on" json:"depends_on"`
 }
 
 type PivioServiceDependsOn struct {
-	Internal []Service `yaml:"internal"`
-	External []Service `yaml:"external"`
+	Internal []Service `yaml:"internal" json:"internal"`
+	External []Service `yaml:"external" json:"external"`
 }
 
 type PivioServiceProvides struct {
-	Description       string `yaml:"description"`
-	ServiceName       string `yaml:"service_name"`
-	Protocol          string `yaml:"protocol"`
-	Port              uint32 `yaml:"port"`
-	TransportProtocol string `yaml:"transport_protocol"`
+	Description       string `yaml:"description" json:"description"`
+	ServiceName       string `yaml:"service_name" json:"service_name"`
+	Protocol          string `yaml:"protocol" json:"protocol"`
+	Port              uint32 `yaml:"port" json:"port"`
+	TransportProtocol string `yaml:"transport_protocol" json:"transport_protocol"`
 }
 
 type Pivio struct {
-	ID        string        `yaml:"id"`
-	ShortName string        `yaml:"short_name"`
-	Runtime   PivioRuntime  `yaml:"runtime"`
-	Services  PivioServices `yaml:"service"`
+	ID        string        `yaml:"id" json:"id"`
+	ShortName string        `yaml:"short_name" json:"short_name"`
+	Runtime   PivioRuntime  `yaml:"runtime" json:"runtime"`
+	Services  PivioServices `yaml:"service" json:"service"`
 	// etc.
 }
 
@@ -70,7 +70,7 @@ func ReadJSONMultiple(r io.Reader) ([]Pivio, error) {
 		return nil, err
 	}
 
-	pivios := []Pivio{}
+	var pivios []Pivio
 	if err := json.Unmarshal(data, &pivios); err != nil {
 		return nil, err
 	}
